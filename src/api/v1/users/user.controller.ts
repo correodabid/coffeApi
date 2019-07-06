@@ -24,36 +24,52 @@ class UserController implements Controller {
   }
 
   private createAdminUser = () => {
-    this.user.find({ username: 'admin' }).then((result: any) => {
-      if (result.username) return;
-      this.user.create({ username: 'admin', password: '1234', role: 'admin' });
-    });
+    try {
+      this.user.find({ username: 'admin' }).then((result: any) => {
+        if (result.username) return;
+        this.user.create({ username: 'admin', password: '1234', role: 'admin' });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
   private getAllUsers = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const res = await this.user.find();
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const res = await this.user.find();
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private getUserById = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const res = await this.user.findById(request.params.id);
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const res = await this.user.findById(request.params.id);
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private getUserByName = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const res = await this.user.findOne({ username: request.params.username });
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const res = await this.user.findOne({ username: request.params.username });
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private createUser = async (request: Request, response: Response) => {
@@ -66,7 +82,7 @@ class UserController implements Controller {
         response.send(res);
       });
     } catch (error) {
-      response.sendStatus(403);
+      response.send(error);
     }
   };
 
@@ -81,7 +97,7 @@ class UserController implements Controller {
         response.send(res);
       });
     } catch (error) {
-      response.sendStatus(401);
+      response.send(error);
     }
   };
 
@@ -95,7 +111,7 @@ class UserController implements Controller {
         response.send(res);
       });
     } catch (error) {
-      response.sendStatus(401);
+      response.send(error);
     }
   };
 
@@ -108,7 +124,7 @@ class UserController implements Controller {
         response.send(res);
       });
     } catch (error) {
-      response.sendStatus(401);
+      response.send(error);
     }
   };
 }

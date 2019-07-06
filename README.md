@@ -2,10 +2,18 @@
 
 Coffee stock system manager
 
+* [Requeriments](#requeriments)
 * [Install and Run](#install)
 * [Docker](#docker)
 * [Testing](#test)
 * [API](#api)
+
+
+<a name="requeriments"></a>
+## Requeriments
+
+* Node > 8
+* Mongodb or Docker
 
 
 <a name="install"></a>

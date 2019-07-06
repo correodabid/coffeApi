@@ -1,4 +1,8 @@
-undefined
-undefined
-undefined
-undefined
+info: ERROR SET ORDER: out of stock
+info: SET COFFEE: 
+info: {"user_id":"5d1fc169d7586143602f54ea","coffee_id":"5d1e7911590d941e81da8b4d","quantity":"3"}
+info: ERROR SET ORDER: out of stock
+info: SET ORDER: order 3 units of coffee
+info: {"user_id":"5d1fc169d7586143602f54ea","coffee_id":"5d2048ef1bbf949387c53837","quantity":"3","amount":36}
+info: UPDATED COFFEE Otro: 3 units of coffee consumed
+info: {"_id":"5d2048ef1bbf949387c53837","name":"Otro","intensity":10,"price":12,"stock":20,"createdAt":"2019-07-06T07:08:31.063Z","updatedAt":"2019-07-06T07:08:31.063Z","__v":0}

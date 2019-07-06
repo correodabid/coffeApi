@@ -30,7 +30,7 @@ class CoffeeController implements Controller {
       const res = await this.coffee.find({});
       response.send(res);
     } catch (error) {
-      response.sendStatus(403);
+      response.send(error);
     }
   };
 
@@ -42,7 +42,7 @@ class CoffeeController implements Controller {
       const res = await this.coffee.findById(id);
       response.send(res);
     } catch (error) {
-      response.sendStatus(403);
+      response.send(error);
     }
   };
 
@@ -53,50 +53,66 @@ class CoffeeController implements Controller {
       const res = await this.coffee.findOne({ name: request.params.coffeeName });
       response.send(res);
     } catch (error) {
-      response.sendStatus(403);
+      response.send(error);
     }
   };
 
   private createCoffee = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const newCoffee = request.body;
-      logger.log('info', 'SET COFFEE: ')
-      logger.log('info', JSON.stringify(newCoffee))
-      const res = await this.coffee.create(newCoffee);
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const newCoffee = request.body;
+        logger.log('info', 'SET COFFEE: ');
+        logger.log('info', JSON.stringify(newCoffee));
+        const res = await this.coffee.create(newCoffee);
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private updateCoffee = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const _coffee = request.body;
-      const id = request.params.id;
-      const res = await this.coffee.findByIdAndUpdate(id, _coffee);
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const _coffee = request.body;
+        const id = request.params.id;
+        const res = await this.coffee.findByIdAndUpdate(id, _coffee);
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private deleteCoffee = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const id = request.params.id;
-      const res = await this.coffee.findByIdAndDelete(id);
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const id = request.params.id;
+        const res = await this.coffee.findByIdAndDelete(id);
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private deleteCoffeeByName = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const res = await this.coffee.findOneAndDelete({ name: request.params.coffeeName });
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const res = await this.coffee.findOneAndDelete({ name: request.params.coffeeName });
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 }
 

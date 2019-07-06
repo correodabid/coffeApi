@@ -26,20 +26,28 @@ class OrderController implements Controller {
 
   private getAllOrders = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const res = await this.order.find({});
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const res = await this.order.find({});
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private getOrderById = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const res = await this.order.findById(request.params.id);
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const res = await this.order.findById(request.params.id);
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private createOrder = async (request: Request, response: Response) => {
@@ -63,29 +71,37 @@ class OrderController implements Controller {
       logger.log('info', JSON.stringify(updatedCoffee));
       response.send(res);
     } catch (error) {
-      response.sendStatus(503);
+      response.send(error);
     }
   };
 
   private updateOrder = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const _order: IOrder = request.body;
-      const id = request.params.id;
-      const res = await this.order.findByIdAndUpdate(id, _order);
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const _order: IOrder = request.body;
+        const id = request.params.id;
+        const res = await this.order.findByIdAndUpdate(id, _order);
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 
   private deleteOrder = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
-    checkIsAdmin(String(request.headers.authorization)).then(async result => {
-      if (!result) response.sendStatus(403);
-      const id = request.params.id;
-      const res = await this.order.deleteOne({ _id: id });
-      response.send(res);
-    });
+    try {
+      checkIsAdmin(String(request.headers.authorization)).then(async result => {
+        if (!result) response.sendStatus(403);
+        const id = request.params.id;
+        const res = await this.order.deleteOne({ _id: id });
+        response.send(res);
+      });
+    } catch (error) {
+      response.send(error);
+    }
   };
 }
 
