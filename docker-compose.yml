@@ -1,0 +1,10 @@
+version: '2'
+services:
+  api:
+   build: .
+   volumes: ['./:/app']
+   ports: [ '8006:8006' ]
+   links: [ mongo ]
+  mongo:
+   image: mongo
+   ports: [ '27017:27017' ]
