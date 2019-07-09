@@ -3,6 +3,9 @@ import Controller from '../../../interfaces/controller.interface';
 import userModel from './user.model';
 import IUser from './user.interface';
 import { checkIsAdmin } from '../../../utils/utils';
+import bcrypt from 'bcrypt';
+
+const BCRYPT_SALT_ROUNDS = 12;
 class UserController implements Controller {
   public path = '/api/v1/users';
   public router = Router();
@@ -27,7 +30,9 @@ class UserController implements Controller {
     try {
       this.user.find({ username: 'admin' }).then((result: any) => {
         if (result.username) return;
-        this.user.create({ username: 'admin', password: '1234', role: 'admin' });
+        bcrypt.hash('1234', BCRYPT_SALT_ROUNDS).then(hashedPassword => {
+          this.user.create({ username: 'admin', password: hashedPassword, role: 'admin' });
+        });
       });
     } catch (error) {
       console.log(error);
@@ -78,8 +83,14 @@ class UserController implements Controller {
       checkIsAdmin(String(request.headers.authorization)).then(async result => {
         if (!result) response.sendStatus(403);
         const newUser: IUser = request.body;
-        const res = await this.user.create(newUser);
-        response.send(res);
+        bcrypt.hash(newUser.password, BCRYPT_SALT_ROUNDS).then(async hashedPassword => {
+          const res = await this.user.create({
+            username: newUser.username,
+            password: hashedPassword,
+            role: newUser.role,
+          });
+          response.send(res);
+        });
       });
     } catch (error) {
       response.send(error);
@@ -93,8 +104,10 @@ class UserController implements Controller {
         if (!result) response.sendStatus(403);
         const _user: IUser = request.body;
         const id = request.params.id;
-        const res = await this.user.findByIdAndUpdate(id, _user);
-        response.send(res);
+        bcrypt.hash(_user.password,BCRYPT_SALT_ROUNDS).then(async hashsedPassword => {
+          const res = await this.user.findByIdAndUpdate(id, _user);
+          response.send(res);
+        })
       });
     } catch (error) {
       response.send(error);

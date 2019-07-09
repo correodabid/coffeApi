@@ -4,7 +4,7 @@ import userModel from '../users/user.model';
 import IUser from '../users/user.interface';
 import key from '../../../key';
 import jwt from 'jsonwebtoken';
-
+import bcrypt from 'bcrypt';
 class AuthController implements Controller {
   public path = '/api/v1/auth';
   public router = Router();
@@ -22,9 +22,12 @@ class AuthController implements Controller {
     try {
       const username = request.body.username;
       const password = request.body.password;
-      const result: any = await this.user.findOne({ username: username, password: password });
+
+      const result: any = await this.user.findOne({ username: username });
       if (!result) response.sendStatus(404);
       const user: IUser = result;
+      const checkPassword = await bcrypt.compare(password, user.password)
+      if(!checkPassword) response.sendStatus(403)
       const tokenData = {
         username: user.username,
         role: user.role,
