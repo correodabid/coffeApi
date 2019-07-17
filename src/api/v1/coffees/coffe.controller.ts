@@ -1,9 +1,9 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import Controller from '../../../interfaces/controller.interface';
 import coffeeModel from './coffe.model';
 import jwt from 'jsonwebtoken';
 import key from '../../../key';
-import { checkIsAdmin, logger } from '../../../utils/utils';
+import { checkPermissions, logger } from '../../../utils/utils';
 
 class CoffeeController implements Controller {
   public path = '/api/v1/coffees';
@@ -17,10 +17,10 @@ class CoffeeController implements Controller {
     this.router.get(this.path, this.getAllCoffees);
     this.router.get(`${this.path}/:id`, this.getCoffeeById);
     this.router.get(`${this.path}/name/:coffeeName`, this.getCoffeeByName);
-    this.router.post(this.path, this.createCoffee);
+    this.router.post(this.path, checkPermissions, this.createCoffee);
     this.router.put(`${this.path}/:id`, this.updateCoffee);
-    this.router.delete(`${this.path}/:id`, this.deleteCoffee);
-    this.router.delete(`${this.path}/name/:coffeeName`, this.deleteCoffeeByName);
+    this.router.delete(`${this.path}/:id`, checkPermissions, this.deleteCoffee);
+    this.router.delete(`${this.path}/name/:coffeeName`, checkPermissions, this.deleteCoffeeByName);
   }
 
   private getAllCoffees = async (request: Request, response: Response) => {
@@ -60,56 +60,41 @@ class CoffeeController implements Controller {
   private createCoffee = async (request: Request, response: Response) => {
     if (!request.headers.authorization) response.sendStatus(403);
     try {
-      checkIsAdmin(String(request.headers.authorization)).then(async result => {
-        if (!result) response.sendStatus(403);
-        const newCoffee = request.body;
-        logger.log('info', 'SET COFFEE: ');
-        logger.log('info', JSON.stringify(newCoffee));
-        const res = await this.coffee.create(newCoffee);
-        response.send(res);
-      });
+      const newCoffee = request.body;
+      logger.log('info', 'SET COFFEE: ');
+      logger.log('info', JSON.stringify(newCoffee));
+      const res = await this.coffee.create(newCoffee);
+      response.send(res);
     } catch (error) {
       response.send(error);
     }
   };
 
   private updateCoffee = async (request: Request, response: Response) => {
-    if (!request.headers.authorization) response.sendStatus(403);
     try {
-      checkIsAdmin(String(request.headers.authorization)).then(async result => {
-        if (!result) response.sendStatus(403);
-        const _coffee = request.body;
-        const id = request.params.id;
-        const res = await this.coffee.findByIdAndUpdate(id, _coffee);
-        response.send(res);
-      });
+      const _coffee = request.body;
+      const id = request.params.id;
+      const res = await this.coffee.findByIdAndUpdate(id, _coffee);
+      response.send(res);
     } catch (error) {
       response.send(error);
     }
   };
 
   private deleteCoffee = async (request: Request, response: Response) => {
-    if (!request.headers.authorization) response.sendStatus(403);
     try {
-      checkIsAdmin(String(request.headers.authorization)).then(async result => {
-        if (!result) response.sendStatus(403);
-        const id = request.params.id;
-        const res = await this.coffee.findByIdAndDelete(id);
-        response.send(res);
-      });
+      const id = request.params.id;
+      const res = await this.coffee.findByIdAndDelete(id);
+      response.send(res);
     } catch (error) {
       response.send(error);
     }
   };
 
   private deleteCoffeeByName = async (request: Request, response: Response) => {
-    if (!request.headers.authorization) response.sendStatus(403);
     try {
-      checkIsAdmin(String(request.headers.authorization)).then(async result => {
-        if (!result) response.sendStatus(403);
-        const res = await this.coffee.findOneAndDelete({ name: request.params.coffeeName });
-        response.send(res);
-      });
+      const res = await this.coffee.findOneAndDelete({ name: request.params.coffeeName });
+      response.send(res);
     } catch (error) {
       response.send(error);
     }

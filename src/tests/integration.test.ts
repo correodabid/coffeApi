@@ -110,7 +110,7 @@ describe('Customer access only to see coffees and make orders', () => {
       .request(url)
       .get('/api/v1/users')
       .set('Authorization', customerToken);
-    expect(res).to.have.status(403);
+    expect(res.body).to.be.empty;
   });
 
   it('should not return all the orders', async () => {
@@ -118,7 +118,7 @@ describe('Customer access only to see coffees and make orders', () => {
       .request(url)
       .get('/api/v1/orders')
       .set('Authorization', customerToken);
-    expect(res).to.have.status(403);
+    expect(res.body).to.be.empty;
   });
 
   it('should return all the coffees', async () => {

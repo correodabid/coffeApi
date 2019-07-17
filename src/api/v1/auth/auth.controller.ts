@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import Controller from '../../../interfaces/controller.interface';
 import userModel from '../users/user.model';
 import IUser from '../users/user.interface';
@@ -24,10 +24,10 @@ class AuthController implements Controller {
       const password = request.body.password;
 
       const result: any = await this.user.findOne({ username: username });
-      if (!result) response.sendStatus(404);
+      if (!result) response.end();
       const user: IUser = result;
-      const checkPassword = await bcrypt.compare(password, user.password)
-      if(!checkPassword) response.sendStatus(403)
+      const checkPassword = await bcrypt.compare(password, user.password);
+      if (!checkPassword) response.end();
       const tokenData = {
         username: user.username,
         role: user.role,
